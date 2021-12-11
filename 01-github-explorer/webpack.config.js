@@ -1,9 +1,14 @@
 const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
+const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
+
+
+const isDevlopment = process.env.NODE_ENV !== 'production';
 
 /* exporta objeto de config */
 module.exports = {
-  mode: 'development',
+  mode: isDevlopment ? 'development':'production',
+  devtool: isDevlopment ? 'eval-source-map' : 'source-map',
   entry: path.resolve(__dirname, 'src', 'index.jsx'),
   output: {
     path: path.resolve(__dirname, 'dist'),
@@ -16,20 +21,32 @@ module.exports = {
     static: {
       directory: path.join(__dirname, 'public'),
     },
-    compress: true,
-    port: 9000,
+    hot: true,
   },
   plugins: [
+    isDevlopment && new ReactRefreshWebpackPlugin(),
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, 'public', 'index.html')
     })
-  ],
+  ].filter(Boolean),
   module: {
     rules:[
       {
         test: /\.jsx$/, /* importar arquivo jsx */
         exclude: /node_modules/,
-        use: 'babel-loader'/* converter para browser */
+        use: {
+          loader: 'babel-loader',/* converter para browser */
+          options: {
+            plugins: [
+              isDevlopment && require.resolve('react-refresh/babel')
+            ].filter(Boolean),
+          },
+        },
+      },
+      {
+        test: /\.scss$/, /* importar arquivo jsx */
+        exclude: /node_modules/,
+        use: ['style-loader', 'css-loader', 'sass-loader'], /* converter para browser */
       }
     ],
   }
