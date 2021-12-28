@@ -12,7 +12,7 @@ export function SigInButton() {
     className={styles.signInButton}
     >
       <FaGithub color="#04d361"/>
-      Ana Gostosa
+      Jose Eduardo
       <FiX color="#737380" className={styles.closeIcon} />
     </button>
   ) : (
