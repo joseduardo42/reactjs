@@ -19,9 +19,9 @@ export default NextAuth({
         }),
     ],
     callbacks: {
-        async signIn(user, account, profile) {
-            //criando tabela de users no fauna
+        async signIn(user) {
             const { email } = user
+            // criando tabela de users no fauna
             try {
                 await fauna.query(
                     q.If(
@@ -35,7 +35,7 @@ export default NextAuth({
                         ),
                         q.Create(
                             q.Collection('users'),
-                            { data: { email }}
+                            { data: {email} }
                         ),
                         q.Get(
                             q.Match(
@@ -45,11 +45,11 @@ export default NextAuth({
                         )
                     )
                 )
-                return true
-            } catch {
-                return false
+                return true;
+            } catch (error){
+                console.log(error)
+                return false;
             }
-
         },
     }
 })
