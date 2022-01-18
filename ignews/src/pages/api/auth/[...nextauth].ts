@@ -13,15 +13,15 @@ export default NextAuth({
             clientSecret: process.env.GITHUB_CLIENT_SECRET,
             authorization: {
                 params: {
-                    scope: 'read:user',
+                    scope: 'read:user'
                 },
             },
         }),
     ],
     callbacks: {
-        async signIn(user) {
+        async signIn({user, account, profile}) {
             const { email } = user
-            // criando tabela de users no fauna
+
             try {
                 await fauna.query(
                     q.If(
@@ -35,8 +35,8 @@ export default NextAuth({
                         ),
                         q.Create(
                             q.Collection('users'),
-                            { data: {email} }
-                        ),
+                            { data: { email } }
+                    ),
                         q.Get(
                             q.Match(
                                 q.Index('user_by_email'),
@@ -45,10 +45,10 @@ export default NextAuth({
                         )
                     )
                 )
-                return true;
-            } catch (error){
-                console.log(error)
-                return false;
+
+                return true
+            } catch {
+                return false
             }
         },
     }
