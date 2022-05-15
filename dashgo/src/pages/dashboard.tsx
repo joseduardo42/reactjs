@@ -91,6 +91,7 @@ export default function Dashboard() {
                         // pb="4"
                     >
                         <Text fontSize="lg" mb="4">Taxa de abertura</Text>
+                        <Chart options={options} series={series} type="area" height={160} />
                     </Box>
                 </SimpleGrid>
             </Flex>
